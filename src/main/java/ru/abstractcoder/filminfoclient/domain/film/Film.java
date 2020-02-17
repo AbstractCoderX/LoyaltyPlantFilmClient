@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.Value;
 import ru.abstractcoder.filminfoclient.domain.genre.Genre;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Value
@@ -17,7 +18,7 @@ public class Film {
     private int id;
     private int voteCount;
     private boolean video;
-    private double voteAverage;
+    private BigDecimal voteAverage;
     private String title;
     private String popularity;
     private String originalLanguage;
@@ -28,15 +29,19 @@ public class Film {
     private LocalDate releaseDate;
 
     @JsonCreator
-    public Film(int id, int voteCount, boolean video, double voteAverage,
+    public Film(int id, int voteCount, boolean video, BigDecimal  voteAverage,
             String title, String popularity, String originalLanguage,
             String originalTitle, int[] genreIds, boolean adult, String overview,
             @JsonProperty("release_date") short[] releaseDateArray) {
-        Preconditions.checkArgument(releaseDateArray.length == 3,
-                "invalid release_date array length, excepted 3, but got %d",
-                releaseDateArray.length
-        );
-        releaseDate = LocalDate.of(releaseDateArray[0], releaseDateArray[1], releaseDateArray[2]);
+        if (releaseDateArray != null) {
+            Preconditions.checkArgument(releaseDateArray.length == 3,
+                    "invalid release_date array length, excepted 3, but got %d",
+                    releaseDateArray.length
+            );
+            releaseDate = LocalDate.of(releaseDateArray[0], releaseDateArray[1], releaseDateArray[2]);
+        } else {
+            releaseDate = null;
+        }
 
         this.id = id;
         this.voteCount = voteCount;
