@@ -35,7 +35,7 @@ public class AverageVoteComputer {
 
     public boolean checkAndLoad() {
         if (!loadStarted) {
-            log.info("loading first page");
+            log.debug("loading first page");
 
             Mono<PageData<Film>> firstPageMono = filmLoader.loadFilms(1);
             loadStarted = true;
@@ -51,7 +51,6 @@ public class AverageVoteComputer {
 
             return false;
         }
-        // log.info("page queue = {}", pageQueue);
 
         if (result != null) {
             return true;
@@ -66,7 +65,7 @@ public class AverageVoteComputer {
     }
 
     private void addPageData(PageData<Film> pageData) {
-        log.info("calculation for page {}", pageData.getPage());
+        log.debug("calculation for page {}", pageData.getPage());
         int filmAmount = 0;
         BigDecimal vote = BigDecimal.ZERO;
         for (Film film : pageData.getValues()) {
@@ -84,14 +83,14 @@ public class AverageVoteComputer {
             result = totalAverageVote.get().divide(BigDecimal.valueOf(filmsLoaded.get()), MathContext.DECIMAL64);
         }
 
-        log.info("current state: pagesLoaded = {}, filmsIncluded = {}, totalAverageVote = {}",
+        log.debug("current state: pagesLoaded = {}, filmsIncluded = {}, totalAverageVote = {}",
                 pagesLoaded.get(), filmsLoaded.get(), totalAverageVote.get()
         );
 
         int page = pageData.getPage() + LoopResources.DEFAULT_IO_WORKER_COUNT;
         if (page <= totalPages) {
             pageQueue.add(page);
-            log.info("page {} added", page);
+            log.debug("page {} added", page);
         }
     }
 
